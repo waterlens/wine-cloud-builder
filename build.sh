@@ -59,7 +59,6 @@ endgroup
 
 begingroup "Install runtime"
 ############ Install runtime ##############
-alias gnucp=/usr/local/opt/coreutils/libexec/gnubin/cp
 echo Installing runtime
 mkdir -p "${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/lib"
 # rm -rf "${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/runtime"
@@ -94,7 +93,7 @@ libusb-1.0.0.dylib"
 for f in $FILES
 do
     echo "finding $f"
-    gnucp $(echo $(find /usr/local/Cellar -name "$f") | head -n1 | cut -d " " -f1) . || true
+    /usr/local/opt/coreutils/libexec/gnubin/cp $(echo $(find /usr/local/Cellar -name "$f") | head -n1 | cut -d " " -f1) . || true
 done
 popd
 endgroup
