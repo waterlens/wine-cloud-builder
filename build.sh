@@ -63,14 +63,14 @@ export BISON="$(brew --prefix bison)/bin/bison"
 # Xcode12 by default enables '-Werror,-Wimplicit-function-declaration' (49917738)
 # this causes wine(64) builds to fail so needs to be disabled.
 # https://developer.apple.com/documentation/xcode-release-notes/xcode-12-release-notes
-export CFLAGS="-g -O2 -Wno-implicit-function-declaration -Wno-deprecated-declarations -Wno-format"
-export LDFLAGS="-Wl,-headerpad_max_install_names"
+export CFLAGS="-s -O3 -Wno-implicit-function-declaration -Wno-deprecated-declarations -Wno-format"
+export LDFLAGS="-Wl,-rpath,../runtime"
 
 # avoid weird linker errors with Xcode 10 and later
 export MACOSX_DEPLOYMENT_TARGET=10.14
 
 # see https://github.com/Gcenx/macOS_Wine_builds/issues/17#issuecomment-750346843
-export CROSSCFLAGS="-g -O2"
+export CROSSCFLAGS="-s -O3"
 
 export SDL2_CFLAGS="-I$(brew --prefix sdl2)/include -I$(brew --prefix sdl2)/include/SDL2"
 export ac_cv_lib_soname_MoltenVK="libMoltenVK.dylib"
@@ -144,6 +144,7 @@ ${WINE_CONFIGURE} \
     --with-unwind \
     --without-usb \
     --without-v4l2 \
+    --with-vulkan \
     --without-x
 popd
 endgroup
@@ -157,6 +158,46 @@ endgroup
 begingroup "Install wine64"
 pushd ${BUILDROOT}/wine64
 make install-lib DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
+popd
+endgroup
+
+begingroup "Install runtime"
+############ Install runtime ##############
+
+echo Installing runtime
+rm -rf "${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/runtime"
+cp -PR runtime "${INSTALLROOT}/${WINE_INSTALLATION}/usr/local"
+pushd "${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/runtime"
+FILES="libSDL2-2.0.0.dylib
+libffi.8.dylib
+libfreetype.6.dylib
+libglib-2.0.0.dylib
+libgmodule-2.0.0.dylib
+libgmp.10.dylib
+libgnutls.30.dylib
+libgobject-2.0.0.dylib
+libgstaudio-1.0.0.dylib
+libgstbase-1.0.0.dylib
+libgstreamer-1.0.0.dylib
+libgsttag-1.0.0.dylib
+libgstvideo-1.0.0.dylib
+libhogweed.6.4.dylib
+libidn2.0.dylib
+libintl.8.dylib
+libjpeg.9.dylib
+libmpg123.0.dylib
+libnettle.8.4.dylib
+liborc-0.4.0.dylib
+libp11-kit.0.dylib
+libpcre.1.dylib
+libpng16.16.dylib
+libtasn1.6.dylib
+libunistring.2.dylib
+libusb-1.0.0.dylib"
+for f in $FILES
+do
+    cp $(echo $(find /usr/local/Cellar -name "$f") | head -n1 | cut -d " " -f1) .
+done
 popd
 endgroup
 
