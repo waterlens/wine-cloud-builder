@@ -21,8 +21,8 @@ jobs:
     steps:
       - name: Cache build
         uses: actions/cache@v3
-        key: build-${{ hashFiles('build.sh') }}
         with:
+          key: build-${{ hashFiles('build.sh') }}
           path: |
             build
           restore-keys: |
