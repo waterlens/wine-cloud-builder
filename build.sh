@@ -56,6 +56,46 @@ brew install \
 
 endgroup
 
+begingroup "Install runtime"
+############ Install runtime ##############
+
+echo Installing runtime
+# rm -rf "${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/runtime"
+cp -R runtime/ "${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/lib"
+pushd "${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/lib"
+FILES="libSDL2-2.0.0.dylib
+libffi.8.dylib
+libfreetype.6.dylib
+libglib-2.0.0.dylib
+libgmodule-2.0.0.dylib
+libgmp.10.dylib
+libgnutls.30.dylib
+libgobject-2.0.0.dylib
+libgstaudio-1.0.0.dylib
+libgstbase-1.0.0.dylib
+libgstreamer-1.0.0.dylib
+libgsttag-1.0.0.dylib
+libgstvideo-1.0.0.dylib
+libhogweed.6.4.dylib
+libidn2.0.dylib
+libintl.8.dylib
+libjpeg.9.dylib
+libmpg123.0.dylib
+libnettle.8.4.dylib
+liborc-0.4.0.dylib
+libp11-kit.0.dylib
+libpcre.1.dylib
+libpng16.16.dylib
+libtasn1.6.dylib
+libunistring.2.dylib
+libusb-1.0.0.dylib"
+for f in $FILES
+do
+    cp $(echo $(find /usr/local/Cellar -name "$f") | head -n1 | cut -d " " -f1) .
+done
+popd
+endgroup
+
 export CC="$(brew --prefix cx-llvm)/bin/clang"
 export CXX="${CC}++"
 export BISON="$(brew --prefix bison)/bin/bison"
@@ -106,6 +146,8 @@ export ac_cv_lib_soname_vulkan=""
 #     cp ${INSTALLROOT}/${DXVK_INSTALLATION}.tar.gz ${PACKAGE_UPLOAD}/
 #     endgroup
 # fi
+
+echo "#define __HACK_1__ $__HACK_1__" >> $GITHUB_WORKSPACE/sources/wine/dlls/ws2_32/ws2_32_private.h
 
 begingroup "Configure wine64"
 mkdir -p ${BUILDROOT}/wine64
@@ -208,8 +250,8 @@ popd
 endgroup
 
 
-begingroup "Install wine32on64-${CROSS_OVER_VERSION}"
-pushd ${BUILDROOT}/wine32on64-${CROSS_OVER_VERSION}
+begingroup "Install wine32on64"
+pushd ${BUILDROOT}/wine32on64
 make install-lib DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
 popd
 endgroup
@@ -220,45 +262,6 @@ make install-lib DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
 popd
 endgroup
 
-begingroup "Install runtime"
-############ Install runtime ##############
-
-echo Installing runtime
-# rm -rf "${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/runtime"
-cp -R runtime/ "${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/lib"
-pushd "${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/lib"
-FILES="libSDL2-2.0.0.dylib
-libffi.8.dylib
-libfreetype.6.dylib
-libglib-2.0.0.dylib
-libgmodule-2.0.0.dylib
-libgmp.10.dylib
-libgnutls.30.dylib
-libgobject-2.0.0.dylib
-libgstaudio-1.0.0.dylib
-libgstbase-1.0.0.dylib
-libgstreamer-1.0.0.dylib
-libgsttag-1.0.0.dylib
-libgstvideo-1.0.0.dylib
-libhogweed.6.4.dylib
-libidn2.0.dylib
-libintl.8.dylib
-libjpeg.9.dylib
-libmpg123.0.dylib
-libnettle.8.4.dylib
-liborc-0.4.0.dylib
-libp11-kit.0.dylib
-libpcre.1.dylib
-libpng16.16.dylib
-libtasn1.6.dylib
-libunistring.2.dylib
-libusb-1.0.0.dylib"
-for f in $FILES
-do
-    cp $(echo $(find /usr/local/Cellar -name "$f") | head -n1 | cut -d " " -f1) .
-done
-popd
-endgroup
 
 begingroup "Tar Wine"
 pushd ${INSTALLROOT}

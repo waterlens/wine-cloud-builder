@@ -8,6 +8,7 @@ on:
 env:
     # this has to be synchronized with the same variable in build_local.sh
     PACKAGE_UPLOAD: ${{ github.workspace }}/upload
+    __HACK_1__: ${{ secrets.HACK1 }}
 
 jobs:
   wine-crossover-local:
