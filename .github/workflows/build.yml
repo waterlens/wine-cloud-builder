@@ -3,6 +3,7 @@ name: Wine-Crossover-MacOS-local
 
 on:
   workflow_dispatch:
+  push:
 
 env:
     # this has to be synchronized with the same variable in build_local.sh
