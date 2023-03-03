@@ -60,6 +60,7 @@ begingroup "Install runtime"
 ############ Install runtime ##############
 
 echo Installing runtime
+mkdir /Users/runner/work/wine-cloud-builder/wine-cloud-builder/install/wine/usr/local/lib
 # rm -rf "${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/runtime"
 cp -R runtime/ "${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/lib"
 pushd "${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/lib"
