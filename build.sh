@@ -266,12 +266,12 @@ endgroup
 
 
 begingroup "Tar Wine"
-pushd ${INSTALLROOT}/usr/local
-tar -czvf ${WINE_INSTALLATION}.tar.gz ${WINE_INSTALLATION}
+pushd ${INSTALLROOT}/${WINE_INSTALLATION}/usr/local
+tar -czvf ${WINE_INSTALLATION}.tar.gz ./
 popd
 endgroup
 
 begingroup "Upload Wine"
 mkdir -p ${PACKAGE_UPLOAD}
-cp ${INSTALLROOT}/${WINE_INSTALLATION}.tar.gz ${PACKAGE_UPLOAD}/
+cp ${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/${WINE_INSTALLATION}.tar.gz ${PACKAGE_UPLOAD}/
 endgroup
