@@ -45,7 +45,8 @@ brew install \
     bison \
     gcenx/wine/cx-llvm \
     mingw-w64 \
-    pkgconfig
+    pkgconfig \
+    coreutils
 
 # runtime dependencies for crossover-wine
 brew install \
@@ -58,7 +59,7 @@ endgroup
 
 begingroup "Install runtime"
 ############ Install runtime ##############
-
+alias gnucp=/usr/local/opt/coreutils/libexec/gnubin/cp
 echo Installing runtime
 mkdir -p "${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/lib"
 # rm -rf "${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/runtime"
@@ -92,7 +93,8 @@ libunistring.2.dylib
 libusb-1.0.0.dylib"
 for f in $FILES
 do
-    cp $(echo $(find /usr/local/Cellar -name "$f") | head -n1 | cut -d " " -f1) .
+    echo "finding $f"
+    gnucp $(echo $(find /usr/local/Cellar -name "$f") | head -n1 | cut -d " " -f1) . || true
 done
 popd
 endgroup
@@ -265,7 +267,7 @@ endgroup
 
 
 begingroup "Tar Wine"
-pushd ${INSTALLROOT}
+pushd ${INSTALLROOT}/usr/local
 tar -czvf ${WINE_INSTALLATION}.tar.gz ${WINE_INSTALLATION}
 popd
 endgroup
