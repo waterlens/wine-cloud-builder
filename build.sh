@@ -51,13 +51,9 @@ brew install \
 # runtime dependencies for crossover-wine
 brew install \
     freetype \
-    gnutls@3.7.8 \
+    gnutls \
     molten-vk \
-    sdl2 \
-    gettext \
-    p11-kit \
-    libidn-2 \
-    nettle
+    sdl2
 
 endgroup
 
