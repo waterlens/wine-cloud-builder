@@ -161,6 +161,7 @@ begingroup "Install runtime"
 echo Installing runtime
 mkdir -p "${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/lib"
 # rm -rf "${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/runtime"
+mkdir -p "runtime"
 pushd runtime
 node ../analyze-deps.js ${BUILDROOT}/wine64/include/config.h
 popd
