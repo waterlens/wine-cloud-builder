@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        "module": "esnext",
+        "types": ["esnext","node"],
+        "target": "es2020"
+    },
+    "include": ["**/*.js"]
+}
