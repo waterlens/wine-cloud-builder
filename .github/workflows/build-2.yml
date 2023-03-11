@@ -10,7 +10,7 @@ env:
     __HACK_1__: ${{ secrets.HACK1 }}
 
 jobs:
-  wine-crossover-local:
+  normal:
 
     strategy:
       fail-fast: false
@@ -50,5 +50,89 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: artifacts-build
+          name: build-normal
+          path: ${{ env.PACKAGE_UPLOAD }}
+  o3:
+
+    strategy:
+      fail-fast: false
+
+    runs-on:  macos-latest
+
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Cache build
+        uses: actions/cache@v3
+        with:
+          key: build-${{ hashFiles('**/build.sh') }}
+          path: |
+            build
+          restore-keys: |
+            build-${{ hashFiles('**/build.sh') }}
+      - name: Checkout
+        uses: actions/checkout@v3
+      - run: npm ci
+      - name: Checkout wine
+        uses: actions/checkout@v3
+        with:
+          repository: 3Shain/winecx
+          path: sources/wine
+          ref: gi-wine-pure
+      # - name: Checkout dxvk
+      #   uses: actions/checkout@v3
+      #   with:
+      #     repository: 3Shain/DXVK-macOS
+      #     path: sources/dxvk
+
+      - name: Run build_local.sh
+        run: ./build-o3.sh
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-o3
+          path: ${{ env.PACKAGE_UPLOAD }}
+  os:
+
+    strategy:
+      fail-fast: false
+
+    runs-on:  macos-latest
+
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Cache build
+        uses: actions/cache@v3
+        with:
+          key: build-${{ hashFiles('**/build.sh') }}
+          path: |
+            build
+          restore-keys: |
+            build-${{ hashFiles('**/build.sh') }}
+      - name: Checkout
+        uses: actions/checkout@v3
+      - run: npm ci
+      - name: Checkout wine
+        uses: actions/checkout@v3
+        with:
+          repository: 3Shain/winecx
+          path: sources/wine
+          ref: gi-wine-pure
+      # - name: Checkout dxvk
+      #   uses: actions/checkout@v3
+      #   with:
+      #     repository: 3Shain/DXVK-macOS
+      #     path: sources/dxvk
+
+      - name: Run build_local.sh
+        run: ./build-os.sh
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-os
           path: ${{ env.PACKAGE_UPLOAD }}
