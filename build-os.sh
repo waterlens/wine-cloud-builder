@@ -64,7 +64,7 @@ export BISON="$(brew --prefix bison)/bin/bison"
 # Xcode12 by default enables '-Werror,-Wimplicit-function-declaration' (49917738)
 # this causes wine(64) builds to fail so needs to be disabled.
 # https://developer.apple.com/documentation/xcode-release-notes/xcode-12-release-notes
-export CFLAGS="-s -Os -Wno-implicit-function-declaration -Wno-deprecated-declarations -Wno-format"
+export CFLAGS="-Os -Wno-implicit-function-declaration -Wno-deprecated-declarations -Wno-format"
 export LDFLAGS="-Wl,-rpath,@loader_path/../../"
 
 # avoid weird linker errors with Xcode 10 and later
