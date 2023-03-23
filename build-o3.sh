@@ -116,7 +116,6 @@ pushd ${BUILDROOT}/wine64
 ${WINE_CONFIGURE} \
     --disable-option-checking \
     --enable-win64 \
-    --disable-winedbg \
     --disable-tests \
     --without-alsa \
     --without-capi \

@@ -3,6 +3,11 @@ name: Pure
 
 on:
   workflow_dispatch:
+    inputs:
+      branch:
+        description: 'which branch to build'     
+        required: true
+        default: 'gi-wine'
 
 env:
     # this has to be synchronized with the same variable in build_local.sh
@@ -29,7 +34,7 @@ jobs:
         with:
           repository: 3Shain/winecx
           path: sources/wine
-          ref: gi-wine-pure
+          ref: ${{ github.event.inputs.branch }}
       # - name: Checkout dxvk
       #   uses: actions/checkout@v3
       #   with:
