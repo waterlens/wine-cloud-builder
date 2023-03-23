@@ -1,0 +1,35 @@
+# modified from https://github.com/GabLeRoux/macos-crossover-wine-cloud-builder/blob/main/.github/workflows/build_local.yml
+name: Mvk
+
+on:
+  workflow_dispatch:
+
+env:
+    # this has to be synchronized with the same variable in build_local.sh
+    PACKAGE_UPLOAD: ${{ github.workspace }}/upload
+
+jobs:
+  molten-vk:
+
+    strategy:
+      fail-fast: false
+
+    runs-on:  macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - run: npm ci
+      - name: Checkout wine
+        uses: actions/checkout@v3
+        with:
+          repository: KhronosGroup/MoltenVK
+          path: /moltenvk
+      - name: Build
+        run: ./build-moltenvk.sh
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifacts-build
+          path: ${{ env.PACKAGE_UPLOAD }}
