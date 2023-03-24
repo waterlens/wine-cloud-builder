@@ -11,6 +11,8 @@ const symlink = promisify(require("fs").symlink);
 const fsConstants = require("fs").constants;
 const koffi = require("koffi");
 
+const skipped = ["libMoltenVK.dylib"];
+
 // return a list of deps
 async function getDeps(name) {
   // tool
@@ -101,6 +103,9 @@ async function main() {
     .map((array) => array[2].slice(1, -1));
   console.log(tofind);
   for (const file of tofind) {
+    if (skipped.indexOf(file) >= 0) {
+      continue;
+    }
     const abspath = await find(file);
     // FIXME: wtf?
     if (abspath == "") continue;
