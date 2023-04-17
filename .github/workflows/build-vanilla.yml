@@ -40,8 +40,8 @@ jobs:
       #     repository: 3Shain/DXVK-macOS
       #     path: sources/dxvk
 
-      - name: Run build_local.sh
-        run: ./valina-build.sh
+      - name: Run vanilla.sh
+        run: ./vanilla.sh
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
