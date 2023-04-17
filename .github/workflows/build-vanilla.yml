@@ -1,5 +1,5 @@
 # modified from https://github.com/GabLeRoux/macos-crossover-wine-cloud-builder/blob/main/.github/workflows/build_local.yml
-name: Vanila
+name: vanilla
 
 on:
   workflow_dispatch:
