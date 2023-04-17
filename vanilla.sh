@@ -68,7 +68,7 @@ export CFLAGS="-O3 -Wno-implicit-function-declaration -Wno-deprecated-declaratio
 export LDFLAGS="-Wl,-rpath,@loader_path/../../"
 
 # avoid weird linker errors with Xcode 10 and later
-export MACOSX_DEPLOYMENT_TARGET=11.0
+export MACOSX_DEPLOYMENT_TARGET=10.14
 
 # see https://github.com/Gcenx/macOS_Wine_builds/issues/17#issuecomment-750346843
 export CROSSCFLAGS="-g -O3"
