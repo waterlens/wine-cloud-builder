@@ -1,0 +1,50 @@
+# modified from https://github.com/GabLeRoux/macos-crossover-wine-cloud-builder/blob/main/.github/workflows/build_local.yml
+name: Vanila
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'which branch to build'     
+        required: true
+        default: 'master'
+
+env:
+    # this has to be synchronized with the same variable in build_local.sh
+    PACKAGE_UPLOAD: ${{ github.workspace }}/upload
+
+jobs:
+  normal:
+
+    strategy:
+      fail-fast: false
+
+    runs-on:  macos-latest
+
+    steps:
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Checkout
+        uses: actions/checkout@v3
+      - run: npm ci
+      - name: Checkout wine
+        uses: actions/checkout@v3
+        with:
+          repository: 3Shain/wine
+          path: sources/wine
+          ref: ${{ github.event.inputs.branch }}
+      # - name: Checkout dxvk
+      #   uses: actions/checkout@v3
+      #   with:
+      #     repository: 3Shain/DXVK-macOS
+      #     path: sources/dxvk
+
+      - name: Run build_local.sh
+        run: ./valina-build.sh
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-normal
+          path: ${{ env.PACKAGE_UPLOAD }}
