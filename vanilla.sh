@@ -186,7 +186,7 @@ endgroup
 
 begingroup "Tar Wine"
 pushd ${INSTALLROOT}/${WINE_INSTALLATION}/usr/local
-cp ./wine/wine ./wine/wine64
+cp ./bin/wine ./bin/wine64
 tar -czvf ${WINE_INSTALLATION}.tar.gz ./
 popd
 endgroup
