@@ -71,7 +71,7 @@ export LDFLAGS="-Wl,-rpath,@loader_path/../../"
 export MACOSX_DEPLOYMENT_TARGET=10.14
 
 # see https://github.com/Gcenx/macOS_Wine_builds/issues/17#issuecomment-750346843
-export CROSSCFLAGS="-g -O3"
+export CROSSCFLAGS="-s -O3"
 
 export SDL2_CFLAGS="-I$(brew --prefix sdl2)/include -I$(brew --prefix sdl2)/include/SDL2"
 export ac_cv_lib_soname_MoltenVK="libMoltenVK.dylib"
@@ -114,6 +114,7 @@ pushd ${BUILDROOT}/wine64
 ${WINE_CONFIGURE} \
     --disable-option-checking \
     --enable-win64 \
+    --enable-archs=i386,x86_64 \
     --disable-tests \
     --without-alsa \
     --without-capi \
@@ -185,6 +186,7 @@ endgroup
 
 begingroup "Tar Wine"
 pushd ${INSTALLROOT}/${WINE_INSTALLATION}/usr/local
+cp ./wine/wine ./wine/wine64
 tar -czvf ${WINE_INSTALLATION}.tar.gz ./
 popd
 endgroup
