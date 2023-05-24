@@ -175,14 +175,14 @@ popd
 endgroup
 
 begingroup "Install other dependencies"
-curl -L https://github.com/madewokherd/wine-mono/releases/download/wine-mono-7.4.1/wine-mono-7.4.1-x86.tar.xz --output mono.tar.xz
+curl -L https://github.com/madewokherd/wine-mono/releases/download/wine-mono-7.4.0/wine-mono-7.4.0-x86.tar.xz --output mono.tar.xz
 mkdir -p ${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/share/wine/mono
 tar -xf mono.tar.xz -C ${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/share/wine/mono
 
-curl -L https://github.com/The-Wineskin-Project/MoltenVK/releases/download/v1.2.3/macos-1.2.3-pr1678-UE4hack-Wideline-zeroinit.tar.xz --output mvk.tar.xz
-tar -xf mvk.tar.xz
-cp ./Package/Release/MoltenVK/dylib/macOS/libMoltenVK.dylib ${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/lib/libMoltenVK.dylib
-endgroup
+# curl -L https://github.com/The-Wineskin-Project/MoltenVK/releases/download/v1.2.3/macos-1.2.3-pr1678-UE4hack-Wideline-zeroinit.tar.xz --output mvk.tar.xz
+# tar -xf mvk.tar.xz
+# cp ./Package/Release/MoltenVK/dylib/macOS/libMoltenVK.dylib ${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/lib/libMoltenVK.dylib
+# endgroup
 
 begingroup "Tar Wine"
 pushd ${INSTALLROOT}/${WINE_INSTALLATION}/usr/local
