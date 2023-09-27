@@ -53,21 +53,29 @@ async function doCopy(from) {
   }
 }
 
-async function analyzeLib(name) {
-  const stack = [name];
+async function analyzeLib(name, originalPath) {
+  const stack = [[name, originalPath]];
   while (stack.length) {
-    const name = stack.pop();
+    const [name, originalPath] = stack.pop();
+    if(!originalPath.startsWith("/")) {
+      throw new Error("not a valid path");
+    }
     const deps = await getDeps(name);
     const self = deps[0];
     console.log(`processing ${self}`);
     await changeId(`@rpath/${path.basename(self)}`, name);
-    for (const dep of deps.slice(1)) {
+    for (let dep of deps.slice(1)) {
       if (!dep.startsWith("/usr/lib/") && !dep.startsWith("/System/Library/")) {
+        if(dep.startsWith("@loader_path/")) {
+          const relativePath = dep.slice("@loader_path/".length);
+          const s = path.dirname(originalPath);
+          dep = path.resolve(s, relativePath);
+        }
         try {
           await access(path.basename(dep), fsConstants.F_OK);
         } catch {
           await doCopy(dep);
-          stack.push(path.basename(dep));
+          stack.push([path.basename(dep), dep]);
         }
         await changeDep(dep, `@loader_path/${path.basename(dep)}`, name);
       }
@@ -114,7 +122,7 @@ async function main() {
     } catch {
       await doCopy(abspath);
     }
-    await analyzeLib(path.basename(abspath));
+    await analyzeLib(path.basename(abspath), abspath);
   }
 }
 
