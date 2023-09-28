@@ -65,17 +65,18 @@ async function analyzeLib(name, originalPath) {
     console.log(`processing ${self}`);
     await changeId(`@rpath/${path.basename(self)}`, name);
     for (let dep of deps.slice(1)) {
+      let realDepPath = dep;
       if (!dep.startsWith("/usr/lib/") && !dep.startsWith("/System/Library/")) {
         if(dep.startsWith("@loader_path/")) {
           const relativePath = dep.slice("@loader_path/".length);
           const s = path.dirname(originalPath);
-          dep = path.resolve(s, relativePath);
+          realDepPath = path.resolve(s, relativePath);
         }
         try {
           await access(path.basename(dep), fsConstants.F_OK);
         } catch {
-          await doCopy(dep);
-          stack.push([path.basename(dep), dep]);
+          await doCopy(realDepPath);
+          stack.push([path.basename(dep), realDepPath]);
         }
         await changeDep(dep, `@loader_path/${path.basename(dep)}`, name);
       }
