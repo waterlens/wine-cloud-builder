@@ -170,7 +170,7 @@ endgroup
 
 begingroup "Install wine64"
 pushd ${BUILDROOT}/wine64
-make install-lib DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
+make install DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
 popd
 endgroup
 
