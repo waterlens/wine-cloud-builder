@@ -18,7 +18,7 @@ endgroup() {
 export GITHUB_WORKSPACE=$(pwd)
 
 # directories / files inside the downloaded tar file directory structure
-export WINE_CONFIGURE=$GITHUB_WORKSPACE/../wine/configure
+export WINE_CONFIGURE=$GITHUB_WORKSPACE/sources/wine/configure
 # export DXVK_BUILDSCRIPT=$GITHUB_WORKSPACE/sources/dxvk/package-release.sh
 # build directories
 export BUILDROOT=$GITHUB_WORKSPACE/build
@@ -176,12 +176,12 @@ endgroup
 
 begingroup "Install wine64"
 pushd ${BUILDROOT}/wine64
-make install DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
+make -j$(sysctl -n hw.ncpu 2>/dev/null) install DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
 popd
 endgroup
 
 begingroup "Install other dependencies"
-curl -L https://github.com/madewokherd/wine-mono/releases/download/wine-mono-7.4.0/wine-mono-7.4.0-x86.tar.xz --output mono.tar.xz
+curl -L https://github.com/madewokherd/wine-mono/releases/download/wine-mono-8.1.0/wine-mono-8.1.0-x86.tar.xz --output mono.tar.xz
 mkdir -p ${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/share/wine/mono
 tar -xf mono.tar.xz -C ${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/share/wine/mono
 
