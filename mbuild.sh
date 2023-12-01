@@ -61,7 +61,7 @@ tar -zvxf ./llvm.tar.xz -C ./toolchains
 export PATH="$PATH:$(pwd)/toolchains/llvm-mingw-20231017-ucrt-macos-universal/bin"
 
 export CC="/usr/bin/clang"
-export CXX="/usr/bin/${CC}++"
+export CXX="${CC}++"
 export BISON="$(brew --prefix bison)/bin/bison"
 
 export x86_64_CC="x86_64-w64-mingw32-gcc"
