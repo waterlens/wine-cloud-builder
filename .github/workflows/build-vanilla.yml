@@ -41,7 +41,7 @@ jobs:
       #     path: sources/dxvk
 
       - name: Run vanilla.sh
-        run: ./vanilla.sh
+        run: ./mbuild.sh
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3
