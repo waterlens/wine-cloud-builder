@@ -1,4 +1,4 @@
-#!/usr/bin/env arch -x86_64 bash
+#!/usr/bin/env arch -x86_64 /bin/bash
 
 set -e
 
@@ -35,6 +35,8 @@ if ! command -v "/usr/local/bin/brew" &>/dev/null; then
     echo "An Intel brew installation is required"
     exit
 fi
+
+eval "$(/usr/local/bin/brew shellenv)"
 
 # # Manually configure $PATH
 # export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
