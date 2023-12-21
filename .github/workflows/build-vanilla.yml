@@ -16,9 +16,6 @@ env:
 jobs:
   normal:
 
-    strategy:
-      fail-fast: false
-
     runs-on:  macos-latest
 
     steps:
@@ -31,17 +28,12 @@ jobs:
       - name: Checkout wine
         uses: actions/checkout@v3
         with:
-          repository: 3Shain/wine
+          repository: waterlens/wine
           path: sources/wine
           ref: ${{ github.event.inputs.branch }}
-      # - name: Checkout dxvk
-      #   uses: actions/checkout@v3
-      #   with:
-      #     repository: 3Shain/DXVK-macOS
-      #     path: sources/dxvk
 
-      - name: Run vanilla.sh
-        run: ./mbuild.sh
+      - name: Build
+        run: ./build.sh
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v3

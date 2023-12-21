@@ -36,15 +36,13 @@ if ! command -v "/usr/local/bin/brew" &>/dev/null; then
     exit
 fi
 
-# Manually configure $PATH
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
+# # Manually configure $PATH
+# export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin"
 
 begingroup "Installing Dependencies"
 # build dependencies
 brew install \
     bison \
-    gcenx/wine/cx-llvm \
-    mingw-w64 \
     pkgconfig \
     coreutils
 
@@ -55,23 +53,31 @@ brew install \
     molten-vk \
     sdl2
 
-endgroup
+# endgroup
 
-export CC="$(brew --prefix cx-llvm)/bin/clang"
+mkdir -p ./toolchains
+curl -SL https://github.com/mstorsjo/llvm-mingw/releases/download/20231128/llvm-mingw-20231128-ucrt-macos-universal.tar.xz > ./llvm.tar.xz
+tar -zvxf ./llvm.tar.xz -C ./toolchains
+export PATH="$PATH:$(pwd)/toolchains/llvm-mingw-20231128-ucrt-macos-universal/bin"
+
+export CC="/usr/bin/clang"
 export CXX="${CC}++"
 export BISON="$(brew --prefix bison)/bin/bison"
+
+export x86_64_CC="x86_64-w64-mingw32-gcc"
+export i386_CC="i686-w64-mingw32-gcc"
 
 # Xcode12 by default enables '-Werror,-Wimplicit-function-declaration' (49917738)
 # this causes wine(64) builds to fail so needs to be disabled.
 # https://developer.apple.com/documentation/xcode-release-notes/xcode-12-release-notes
-export CFLAGS="-g -O2 -Wno-implicit-function-declaration -Wno-deprecated-declarations -Wno-format"
+export CFLAGS="-O3 -Wno-implicit-function-declaration -Wno-deprecated-declarations -Wno-format"
 export LDFLAGS="-Wl,-rpath,@loader_path/../../"
 
 # avoid weird linker errors with Xcode 10 and later
 export MACOSX_DEPLOYMENT_TARGET=10.14
 
 # see https://github.com/Gcenx/macOS_Wine_builds/issues/17#issuecomment-750346843
-export CROSSCFLAGS="-g -O2"
+export CROSSCFLAGS="-O3"
 
 export SDL2_CFLAGS="-I$(brew --prefix sdl2)/include -I$(brew --prefix sdl2)/include/SDL2"
 export ac_cv_lib_soname_MoltenVK="libMoltenVK.dylib"
@@ -108,14 +114,13 @@ export ac_cv_lib_soname_vulkan=""
 #     endgroup
 # fi
 
-echo "#define __HACK_1__ $__HACK_1__" >> $GITHUB_WORKSPACE/sources/wine/dlls/ws2_32/ws2_32_private.h
-
 begingroup "Configure wine64"
 mkdir -p ${BUILDROOT}/wine64
 pushd ${BUILDROOT}/wine64
 ${WINE_CONFIGURE} \
     --disable-option-checking \
     --enable-win64 \
+    --enable-archs=i386,x86_64 \
     --disable-tests \
     --without-alsa \
     --without-capi \
@@ -169,74 +174,25 @@ make -j$(sysctl -n hw.ncpu 2>/dev/null)
 popd
 endgroup
 
-begingroup "Configure wine32on64"
-mkdir -p ${BUILDROOT}/wine32on64
-pushd ${BUILDROOT}/wine32on64
-${WINE_CONFIGURE} \
-    --disable-option-checking \
-    --enable-win32on64 \
-    --disable-winedbg \
-    --with-wine64=${BUILDROOT}/wine64 \
-    --disable-tests \
-    --without-alsa \
-    --without-capi \
-    --with-coreaudio \
-    --with-cups \
-    --without-dbus \
-    --without-fontconfig \
-    --with-freetype \
-    --with-gettext \
-    --without-gettextpo \
-    --without-gphoto \
-    --with-gnutls \
-    --without-gssapi \
-    --without-gstreamer \
-    --without-inotify \
-    --without-krb5 \
-    --with-mingw \
-    --without-netapi \
-    --with-opencl \
-    --with-opengl \
-    --without-oss \
-    --with-pcap \
-    --with-pthread \
-    --without-pulse \
-    --without-sane \
-    --with-sdl \
-    --without-udev \
-    --with-unwind \
-    --without-usb \
-    --without-v4l2 \
-    --without-x \
-    --without-vulkan \
-    --disable-vulkan_1 \
-    --disable-winevulkan
-popd
-endgroup
-
-
-begingroup "Build wine32on64"
-pushd ${BUILDROOT}/wine32on64
-make -k -j$(sysctl -n hw.activecpu 2>/dev/null)
-popd
-endgroup
-
-
-begingroup "Install wine32on64"
-pushd ${BUILDROOT}/wine32on64
-make install-lib DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
-popd
-endgroup
-
 begingroup "Install wine64"
 pushd ${BUILDROOT}/wine64
-make install-lib DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
+make -j$(sysctl -n hw.ncpu 2>/dev/null) install DESTDIR="${INSTALLROOT}/${WINE_INSTALLATION}"
 popd
 endgroup
 
+begingroup "Install other dependencies"
+curl -L https://github.com/madewokherd/wine-mono/releases/download/wine-mono-8.1.0/wine-mono-8.1.0-x86.tar.xz --output mono.tar.xz
+mkdir -p ${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/share/wine/mono
+tar -xf mono.tar.xz -C ${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/share/wine/mono
+
+# curl -L https://github.com/The-Wineskin-Project/MoltenVK/releases/download/v1.2.3/macos-1.2.3-pr1678-UE4hack-Wideline-zeroinit.tar.xz --output mvk.tar.xz
+# tar -xf mvk.tar.xz
+# cp ./Package/Release/MoltenVK/dylib/macOS/libMoltenVK.dylib ${INSTALLROOT}/${WINE_INSTALLATION}/usr/local/lib/libMoltenVK.dylib
+# endgroup
 
 begingroup "Tar Wine"
 pushd ${INSTALLROOT}/${WINE_INSTALLATION}/usr/local
+cp ./bin/wine ./bin/wine64
 tar -czvf ${WINE_INSTALLATION}.tar.gz ./
 popd
 endgroup
